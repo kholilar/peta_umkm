@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,47 +34,15 @@
         }
     </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js">
-    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
-    new Chart(pieLokasi, {
-        type: 'pie',
-        data: {
-            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
-            datasets: [{
-                label: 'Lokasi Usaha',
-                data: [116, 52, 20, 6, 5],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-    const pieBadan = document.getElementById('pieBadan').getContext('2d');
-    new Chart(pieBadan, {
-        type: 'pie',
-        data: {
-            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
-            datasets: [{
-                label: 'Bentuk Badan Usaha',
-                data: [169, 24, 6],
-                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-    </script>
     
-    </head>
+    
+    
+<!-- Correct external JS includes -->
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+</head>
     
 <body>
 
@@ -131,85 +100,9 @@ window.onload = function() {
     </div>
     <div id="map"></div>
 
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js">
-    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
-    new Chart(pieLokasi, {
-        type: 'pie',
-        data: {
-            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
-            datasets: [{
-                label: 'Lokasi Usaha',
-                data: [116, 52, 20, 6, 5],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-    const pieBadan = document.getElementById('pieBadan').getContext('2d');
-    new Chart(pieBadan, {
-        type: 'pie',
-        data: {
-            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
-            datasets: [{
-                label: 'Bentuk Badan Usaha',
-                data: [169, 24, 6],
-                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-    </script>
     
-    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js">
-    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
-    new Chart(pieLokasi, {
-        type: 'pie',
-        data: {
-            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
-            datasets: [{
-                label: 'Lokasi Usaha',
-                data: [116, 52, 20, 6, 5],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-
-    const pieBadan = document.getElementById('pieBadan').getContext('2d');
-    new Chart(pieBadan, {
-        type: 'pie',
-        data: {
-            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
-            datasets: [{
-                label: 'Bentuk Badan Usaha',
-                data: [169, 24, 6],
-                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
-    </script>
+    
+    
     
     <script>
         const map = L.map('map').setView([-6.8085, 111.8885], 15);

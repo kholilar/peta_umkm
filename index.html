@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Peta UMKM Desa Merkawang</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <style>
+        html, body { height: 100%; margin: 0; }
+        #map { width: 100%; height: 100%; }
+        .sidebar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 260px;
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            font-family: sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .sidebar h3 { margin: 0 0 8px 0; font-size: 16px; }
+        .filter-select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 12px;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">
+    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
+    new Chart(pieLokasi, {
+        type: 'pie',
+        data: {
+            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
+            datasets: [{
+                label: 'Lokasi Usaha',
+                data: [116, 52, 20, 6, 5],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const pieBadan = document.getElementById('pieBadan').getContext('2d');
+    new Chart(pieBadan, {
+        type: 'pie',
+        data: {
+            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
+            datasets: [{
+                label: 'Bentuk Badan Usaha',
+                data: [169, 24, 6],
+                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    </script>
+    
+    </head>
+    
+<body>
+
+<style>
+#layerSelector {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1001;
+    font-size: 14px;
+    padding: 6px 8px;
+    border-radius: 4px;
+}
+</style>
+
+<select id="layerSelector" onchange="switchLayer()">
+    <option value="satellite">🌍 Satelit</option>
+    <option value="street">🗺️ Peta Biasa</option>
+</select>
+
+<script>
+let currentLayer;
+const tileLayers = {
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles © Esri, Maxar, Earthstar Geographics'
+    }),
+    street: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Tiles © OpenStreetMap contributors'
+    })
+};
+
+function switchLayer() {
+    if (currentLayer) map.removeLayer(currentLayer);
+    const selected = document.getElementById('layerSelector').value;
+    currentLayer = tileLayers[selected];
+    currentLayer.addTo(map);
+}
+
+window.onload = function() {
+    switchLayer();  // default based on selector
+    if (typeof makeSidebarDraggable === 'function') makeSidebarDraggable();
+};
+</script>
+
+    <div class="sidebar">
+        <h3>📊 Statistik UMKM</h3>
+        <label for="rtFilter"><b>Filter RT/RW:</b></label>
+        <select id="rtFilter" class="filter-select" onchange="filterRT()">
+            <option value="ALL">🔍 Semua RT</option>
+        </select>
+        
+    <div id="stats" style="max-height: 180px; overflow-y: auto; margin-bottom: 10px;"></div>
+    <canvas id="chartUMKM" width="250" height="200"></canvas><canvas id="pieLokasi" width="250" height="200"></canvas><canvas id="pieBadan" width="250" height="200"></canvas>
+    
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js">
+    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
+    new Chart(pieLokasi, {
+        type: 'pie',
+        data: {
+            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
+            datasets: [{
+                label: 'Lokasi Usaha',
+                data: [116, 52, 20, 6, 5],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const pieBadan = document.getElementById('pieBadan').getContext('2d');
+    new Chart(pieBadan, {
+        type: 'pie',
+        data: {
+            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
+            datasets: [{
+                label: 'Bentuk Badan Usaha',
+                data: [169, 24, 6],
+                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    </script>
+    
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js">
+    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
+    new Chart(pieLokasi, {
+        type: 'pie',
+        data: {
+            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
+            datasets: [{
+                label: 'Lokasi Usaha',
+                data: [116, 52, 20, 6, 5],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const pieBadan = document.getElementById('pieBadan').getContext('2d');
+    new Chart(pieBadan, {
+        type: 'pie',
+        data: {
+            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
+            datasets: [{
+                label: 'Bentuk Badan Usaha',
+                data: [169, 24, 6],
+                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    </script>
+    
+    <script>
+        const map = L.map('map').setView([-6.8085, 111.8885], 15);
+        
+
+        const markers = L.markerClusterGroup();
+        let geojsonLayer;
+
+        function getColor(count) {
+            return count >= 10 ? '#e31a1c' :
+                   count >= 5  ? '#fd8d3c' :
+                   count > 0   ? '#fecc5c' :
+                                 '#31a354';
+        }
+
+        function styleFeature(feature) {
+            return {
+                fillColor: getColor(feature.properties.jumlah_umkm),
+                weight: 1,
+                opacity: 1,
+                color: 'white',
+                fillOpacity: 0.6
+            };
+        }
+
+        function onEachFeature(feature, layer) {
+            const p = feature.properties;
+            const popup = "<b>RT/RW:</b> " + p.nmsls + "<br><b>Dusun:</b> " + p.nmdesa + "<br><b>Kecamatan:</b> " + p.nmkec +
+                          "<br><b>Kabupaten:</b> " + p.nmkab + "<br><b>Luas:</b> " + p.luas + " ha<br><b>Jumlah UMKM:</b> " + p.jumlah_umkm;
+            layer.bindPopup(popup);
+        }
+
+        fetch('merkawang_enriched.geojson')
+            .then(res => res.json())
+            .then(data => {
+                geojsonLayer = L.geoJson(data, {
+                    style: styleFeature,
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+
+                const rtSet = new Set();
+                data.features.forEach(f => rtSet.add(f.properties.nmsls));
+                Array.from(rtSet).sort().forEach(rt => {
+                    const opt = document.createElement("option");
+                    opt.value = rt;
+                    opt.textContent = rt;
+                    document.getElementById("rtFilter").appendChild(opt);
+                });
+
+                updateStats(data.features);
+            }).catch(err => {
+                console.error("Gagal memuat GeoJSON:", err);
+            });
+
+        fetch('umkm_merkawang_data.csv')
+            .then(res => res.text())
+            .then(csv => {
+                const rows = csv.trim().split('\n').slice(1);
+                for (let row of rows) {
+                    const cols = row.split(',');
+                    if (cols.length < 6) continue;
+                    const rt = cols[0];
+                    const pemilik = cols[1];
+                    const usaha = cols[2];
+                    const alamat = cols[3];
+                    const lat = parseFloat(cols[4]);
+                    const lon = parseFloat(cols[5]);
+
+                    if (!isNaN(lat) && !isNaN(lon)) {
+                        
+let pop = `<b>Nama Usaha:</b> ${usaha}<br><b>Nama Pemilik:</b> ${pemilik}<br><b>Alamat:</b> ${alamat}<br><b>RT/RW:</b> ${rt}`;
+if (cols[6] && cols[6].startsWith('http')) {
+    pop += `<br><img src="${cols[6]}" alt="Foto Usaha" style="width:220px;margin-top:6px;border-radius:8px;">`;
+}
+
+                        const marker = L.marker([lat, lon]).bindPopup(pop);
+                        marker.feature = { rt: rt };
+                        markers.addLayer(marker);
+                    }
+                }
+                map.addLayer(markers);
+            }).catch(err => {
+                console.error("Gagal memuat CSV:", err);
+            });
+
+        function filterRT() {
+            const selected = document.getElementById("rtFilter").value;
+            geojsonLayer.eachLayer(layer => {
+                const show = selected === "ALL" || layer.feature.properties.nmsls === selected;
+                layer.setStyle({ fillOpacity: show ? 0.6 : 0 });
+            });
+            markers.eachLayer(marker => {
+                const show = selected === "ALL" || marker.feature.rt === selected;
+                if (show) markers.addLayer(marker);
+                else markers.removeLayer(marker);
+            });
+        }
+
+        
+    function updateStats(features) {
+        const chartData = {};
+    
+            let total = 0;
+            let html = '';
+            features.forEach(f => {
+                total += f.properties.jumlah_umkm;
+                
+        html += `<div><b>${f.properties.nmsls}</b>: ${f.properties.jumlah_umkm} UMKM</div>`;
+        chartData[f.properties.nmsls] = f.properties.jumlah_umkm;
+    
+            });
+            
+        document.getElementById("stats").innerHTML = `<p><b>Total UMKM:</b> ${total}</p>` + html;
+
+        const ctx = document.getElementById('chartUMKM').getContext('2d');
+        if (window.myChart) window.myChart.destroy();  // Reset chart if already exists
+        window.myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(chartData),
+                datasets: [{
+                    label: 'Jumlah UMKM per RT/RW',
+                    data: Object.values(chartData),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: true }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    
+        }
+    
+    const pieLokasi = document.getElementById('pieLokasi').getContext('2d');
+    new Chart(pieLokasi, {
+        type: 'pie',
+        data: {
+            labels: ['2. Bangunan Campuran/ Usaha', '1. Bangunan Khusus Usaha', '3. Kaki Lima', '5. Didalam bangunan tempat tinggal/Online', '4. Keliling'],
+            datasets: [{
+                label: 'Lokasi Usaha',
+                data: [116, 52, 20, 6, 5],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF9800']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    const pieBadan = document.getElementById('pieBadan').getContext('2d');
+    new Chart(pieBadan, {
+        type: 'pie',
+        data: {
+            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
+            datasets: [{
+                label: 'Bentuk Badan Usaha',
+                data: [169, 24, 6],
+                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    </script>
+    
+</body>
+</html>

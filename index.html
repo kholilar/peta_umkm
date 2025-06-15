@@ -264,24 +264,7 @@ if (cols[6] && cols[6].startsWith('http')) {
         }
     });
 
-    const pieBadan = document.getElementById('pieBadan').getContext('2d');
-    new Chart(pieBadan, {
-        type: 'pie',
-        data: {
-            labels: ['3. Tidak berbadan hukum/usaha', '2. Ijin Desa atau Ijin lainnya', '1. PT/Persero/Perum/NV/CV/Yayasan/Koperasi/Sejenisnya'],
-            datasets: [{
-                label: 'Bentuk Badan Usaha',
-                data: [169, 24, 6],
-                backgroundColor: ['#4CAF50', '#FF9800', '#03A9F4']
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { position: 'bottom' }
-            }
-        }
-    });
+    
     </script>
     
 </body>

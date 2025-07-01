@@ -162,7 +162,7 @@ window.onload = function() {
             .then(csv => {
                 const rows = csv.trim().split('\n').slice(1);
                 for (let row of rows) {
-                    const cols = row.split(',');
+                    const cols = row.split(';');
                     if (cols.length < 6) continue;
                     const rt = cols[0];
                     const pemilik = cols[1];
